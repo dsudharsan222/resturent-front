@@ -1,0 +1,70 @@
+.hero {
+  position: relative;
+  height: 80vh;
+  min-height: 500px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-bg-white);
+  text-align: center;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+}
+
+.title {
+  font-size: 4rem;
+  color: var(--color-secondary);
+  margin-bottom: var(--spacing-md);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+}
+
+.tagline {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-xl);
+  opacity: 0.9;
+  
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 0 var(--spacing-md);
+  }
+}
+
+.whiteOutline {
+  border-color: var(--color-bg-white);
+  color: var(--color-bg-white);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--color-bg-white);
+    color: var(--color-primary);
+  }
+}

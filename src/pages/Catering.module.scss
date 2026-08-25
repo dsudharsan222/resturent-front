@@ -1,0 +1,66 @@
+.cateringPage {
+  padding-top: 80px;
+  background-color: var(--color-bg-light);
+  min-height: 100vh;
+}
+
+.pageHeader {
+  background-color: var(--color-primary);
+  color: var(--color-bg-white);
+  padding: var(--spacing-xl) 0;
+  text-align: center;
+}
+
+.title {
+  color: var(--color-secondary);
+  font-size: 3rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  opacity: 0.9;
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.enquirySection {
+  background-color: var(--color-bg-white);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.enquiryContent {
+  max-width: 800px;
+  margin: 0 auto;
+  
+  h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  p {
+    text-align: center;
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-xl);
+  }
+}
+
+.successMessage {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+  font-weight: 500;
+  border: 1px solid var(--color-success-bg);
+}

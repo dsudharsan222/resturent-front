@@ -1,0 +1,112 @@
+.adminLayout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-gray-100);
+  font-family: 'Inter', sans-serif;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: var(--color-gray-900);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.logo {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-gray-900);
+  text-align: center;
+  h2 {
+    margin: 0;
+    color: var(--color-bg-white);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  flex: 1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  color: var(--color-gray-400);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  gap: 1rem;
+
+  &:hover {
+    background-color: var(--color-gray-900);
+    color: var(--color-bg-white);
+  }
+
+  &.active {
+    background-color: var(--color-danger);
+    color: var(--color-bg-white);
+    border-left: 4px solid var(--color-bg-white);
+  }
+
+  span {
+    font-weight: 500;
+  }
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 70px;
+  background-color: var(--color-bg-white);
+  border-bottom: 1px solid var(--color-gray-300);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+
+  h1 {
+    font-size: 1.25rem;
+    color: var(--color-gray-900);
+    margin: 0;
+  }
+}
+
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: 1px solid var(--color-gray-300);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--color-gray-700);
+  font-weight: 500;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: var(--color-gray-100);
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+  }
+}
+
+.pageContent {
+  padding: 2rem;
+  flex: 1;
+  overflow-y: auto;
+}

@@ -1,0 +1,95 @@
+.card {
+  background-color: var(--color-bg-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.imageContainer {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .card:hover img {
+    transform: scale(1.05);
+  }
+}
+
+.content {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-primary);
+}
+
+.description {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+.capacity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-secondary);
+  font-weight: 500;
+  margin-bottom: var(--spacing-md);
+  padding: 8px 12px;
+  background-color: var(--color-bg-light);
+  border-radius: var(--radius-sm);
+}
+
+.benefits {
+  margin-bottom: var(--spacing-lg);
+  flex: 1;
+  
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--color-text-dark);
+    
+    svg {
+      color: var(--color-success);
+      flex-shrink: 0;
+    }
+  }
+}
+
+.footer {
+  margin-top: auto;
+  
+  a {
+    display: block;
+  }
+  
+  button {
+    width: 100%;
+  }
+}

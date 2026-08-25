@@ -1,0 +1,145 @@
+.homePage {
+  width: 100%;
+}
+
+.hero {
+  height: 100vh;
+  min-height: 600px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: var(--color-bg-white);
+  padding-top: 60px;
+  
+  h1 {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 2px;
+    
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+}
+
+.tagline {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-xl);
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--color-secondary);
+}
+
+.heroActions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    padding: 0 var(--spacing-xl);
+  }
+}
+
+.aboutPreview {
+  background-color: var(--color-bg-white);
+}
+
+.aboutGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.aboutText {
+  .description {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-lg);
+  }
+}
+
+.aboutImages {
+  position: relative;
+  
+  .mainImg {
+    width: 100%;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.servicesSection {
+  background-color: var(--color-bg-light);
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.menuGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.testimonialsSection {
+  background-color: var(--color-primary);
+  color: var(--color-bg-white);
+  
+  h2 {
+    color: var(--color-secondary);
+  }
+}
+
+.testimonialsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.reviewCard {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  .reviewText {
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.9;
+  }
+  
+  .author {
+    color: var(--color-secondary);
+    font-weight: 600;
+  }
+}
