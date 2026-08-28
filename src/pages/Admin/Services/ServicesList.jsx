@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCateringServices } from '../../../services/api';
-import { createService, updateService, deleteService } from '../../../services/adminApi';
-import { Edit2, Trash2, Plus, X, ListPlus } from 'lucide-react';
+import { createService, deleteService } from '../../../services/adminApi';
+import { Edit2, Trash2, Plus, X, ListPlus, Users, Eye } from 'lucide-react';
 import Button from '../../../components/UI/Button';
 import styles from './ServicesList.module.scss';
+import toast from 'react-hot-toast';
 
 const ServicesList = () => {
   const navigate = useNavigate();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initialFormState = {
     id: '',
@@ -33,9 +35,10 @@ const ServicesList = () => {
     try {
       setLoading(true);
       const data = await getCateringServices();
-      setServices(data || []);
+      setServices(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to fetch services:', err);
+      toast.error('Failed to load catering services');
     } finally {
       setLoading(false);
     }
@@ -67,14 +70,14 @@ const ServicesList = () => {
 
   const handleRemoveArrayItem = (field, index) => {
     const newArray = formData[field].filter((_, i) => i !== index);
-    if (newArray.length === 0) newArray.push(''); // Ensure at least one input remains
+    if (newArray.length === 0) newArray.push('');
     setFormData({ ...formData, [field]: newArray });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
-      // Clean up arrays: remove empty strings
       const payload = {
         ...formData,
         benefits: formData.benefits.filter(b => b.trim() !== ''),
@@ -82,207 +85,242 @@ const ServicesList = () => {
       };
 
       await createService(payload);
+      toast.success('Catering package created successfully!');
       handleCloseModal();
       fetchData();
     } catch (err) {
-      console.error(err);
+      toast.error(err.message || 'Failed to create catering service');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this catering service?')) {
+  const handleDelete = async (id, name) => {
+    if (window.confirm(`Are you sure you want to delete catering package "${name}"?`)) {
       try {
         await deleteService(id);
+        toast.success('Service deleted.');
         fetchData();
       } catch (err) {
-        console.error(err);
+        toast.error(err.message || 'Failed to delete service');
       }
     }
   };
 
-  if (loading) return <div>Loading Catering Services...</div>;
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2>Catering Services</h2>
-        <Button onClick={() => handleOpenModal()} className={styles.addBtn}>
-          <Plus size={18} /> Add Service
+        <div>
+          <h2>Catering Services & Event Packages</h2>
+          <p>Configure event tiers, custom menu offerings, and guest capacity limits.</p>
+        </div>
+        <Button onClick={handleOpenModal} variant="primary">
+          <Plus size={18} /> Add New Package
         </Button>
       </div>
 
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Service Name</th>
-              <th>Capacity</th>
-              <th>Benefits</th>
-              <th>Menu Options</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {services.map(srv => (
-              <tr key={srv.id}>
-                <td>
-                  <div className={styles.srvName}>
-                    {srv.image_url && <img src={srv.image_url} alt={srv.name} className={styles.srvImage} />}
-                    <div>
-                      <strong>{srv.name}</strong>
-                      <span className={styles.srvId}>({srv.id})</span>
-                    </div>
-                  </div>
-                </td>
-                <td>{srv.capacity || '-'}</td>
-                <td>{srv.benefits?.length || 0} items</td>
-                <td>{srv.menu_options?.length || 0} items</td>
-                <td>
-                  <div className={styles.actions}>
-                    <button className={styles.editBtn} onClick={() => navigate(`/admin/services/${srv.id}`)}>
-                      <Edit2 size={16} />
-                    </button>
-                    <button className={styles.deleteBtn} onClick={() => handleDelete(srv.id)}>
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {services.length === 0 && (
+      {loading ? (
+        <div className={styles.skeletonTable}>
+          {[1, 2, 3].map(n => (
+            <div key={n} className="skeleton" style={{ height: '70px', borderRadius: '8px', marginBottom: '0.5rem' }}></div>
+          ))}
+        </div>
+      ) : (
+        <div className={styles.tableCard}>
+          <table className={styles.table}>
+            <thead>
               <tr>
-                <td colSpan="5" style={{ textAlign: 'center', padding: '2rem' }}>No catering services found.</td>
+                <th>Service Name & Identifier</th>
+                <th>Guest Capacity</th>
+                <th>Features / Benefits</th>
+                <th>Menu Styles</th>
+                <th>Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {services.map((srv) => (
+                <tr key={srv.id}>
+                  <td>
+                    <div className={styles.srvName}>
+                      {srv.image_url ? (
+                        <img src={srv.image_url} alt={srv.name} className={styles.srvImage} />
+                      ) : (
+                        <div className={styles.placeholderImg}>🎉</div>
+                      )}
+                      <div>
+                        <strong>{srv.name}</strong>
+                        <span className={styles.srvId}>/{srv.id}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={styles.capacityTag}>
+                      <Users size={13} /> {srv.capacity || 'Flexible'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={styles.countTag}>
+                      {srv.benefits?.length || 0} features
+                    </span>
+                  </td>
+                  <td>
+                    <span className={styles.countTag}>
+                      {srv.menu_options?.length || 0} styles
+                    </span>
+                  </td>
+                  <td>
+                    <div className={styles.actionBtns}>
+                      <button 
+                        className={styles.editBtn} 
+                        onClick={() => navigate(`/admin/services/${srv.id}`)}
+                        title="Configure Features & Menus"
+                      >
+                        <Edit2 size={16} /> Edit
+                      </button>
+                      <button 
+                        className={styles.deleteBtn} 
+                        onClick={() => handleDelete(srv.id, srv.name)}
+                        title="Delete Service"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {services.length === 0 && (
+                <tr>
+                  <td colSpan="5" className={styles.emptyTd}>No catering services found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
+      {/* Modal */}
       {isModalOpen && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
+        <div className={styles.modalOverlay} onClick={handleCloseModal}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h3>Add Catering Service</h3>
+              <h3>Create New Catering Package</h3>
               <button className={styles.closeBtn} onClick={handleCloseModal}><X size={20} /></button>
             </div>
             
             <div className={styles.modalBody}>
               <form id="serviceForm" onSubmit={handleSubmit} className={styles.form}>
-                
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
-                    <label>ID (Unique lowercase identifier)</label>
+                    <label>Unique ID (lowercase slug) *</label>
                     <input 
                       type="text" 
                       name="id" 
                       value={formData.id} 
                       onChange={handleInputChange} 
                       required 
-                      placeholder="e.g. wedding"
+                      placeholder="e.g. housewarming"
                     />
                   </div>
                   <div className={styles.formGroup}>
-                    <label>Display Name</label>
+                    <label>Package Display Name *</label>
                     <input 
                       type="text" 
                       name="name" 
                       value={formData.name} 
                       onChange={handleInputChange} 
                       required 
-                      placeholder="e.g. Wedding Catering"
+                      placeholder="e.g. Housewarming Pooja Catering"
                     />
                   </div>
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Description</label>
-                  <textarea name="description" value={formData.description} onChange={handleInputChange} rows="3" />
+                  <label>Package Description</label>
+                  <textarea 
+                    name="description" 
+                    value={formData.description} 
+                    onChange={handleInputChange} 
+                    rows="3" 
+                    placeholder="Overview of this occasion..."
+                  />
                 </div>
 
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
-                    <label>Capacity</label>
+                    <label>Guest Capacity</label>
                     <input 
                       type="text" 
                       name="capacity" 
                       value={formData.capacity} 
                       onChange={handleInputChange} 
-                      placeholder="e.g. 50-1000 Guests"
+                      placeholder="e.g. 50 - 500 Guests"
                     />
                   </div>
                   <div className={styles.formGroup}>
-                    <label>URL Path (Optional)</label>
+                    <label>Cover Image URL</label>
                     <input 
-                      type="text" 
-                      name="path" 
-                      value={formData.path} 
+                      type="url" 
+                      name="image_url" 
+                      value={formData.image_url} 
                       onChange={handleInputChange} 
-                      placeholder="e.g. /catering/wedding"
+                      placeholder="https://images.unsplash.com/..." 
                     />
                   </div>
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label>Image URL</label>
-                  <input type="url" name="image_url" value={formData.image_url} onChange={handleInputChange} placeholder="https://..." />
-                </div>
-
-                <hr className={styles.divider} />
-
-                {/* Benefits Array */}
+                {/* Benefits List */}
                 <div className={styles.arraySection}>
                   <div className={styles.arrayHeader}>
-                    <label>Benefits & Features</label>
+                    <label>Key Features & Service Highlights</label>
                     <button type="button" className={styles.addArrayBtn} onClick={() => handleAddArrayItem('benefits')}>
-                      <ListPlus size={16} /> Add Benefit
+                      <ListPlus size={15} /> Add Feature
                     </button>
                   </div>
                   {formData.benefits.map((benefit, index) => (
-                    <div key={`benefit-${index}`} className={styles.arrayItem}>
+                    <div key={`b-${index}`} className={styles.arrayItem}>
                       <input 
                         type="text" 
                         value={benefit} 
                         onChange={(e) => handleArrayChange('benefits', index, e.target.value)} 
-                        placeholder="e.g. Premium table setup"
+                        placeholder="e.g. Live Banana Leaf Serving"
                       />
-                      <button type="button" className={styles.removeArrayBtn} onClick={() => handleRemoveArrayItem('benefits', index)}>
+                      <button type="button" onClick={() => handleRemoveArrayItem('benefits', index)}>
                         <X size={16} />
                       </button>
                     </div>
                   ))}
                 </div>
 
-                <hr className={styles.divider} />
-
-                {/* Menu Options Array */}
+                {/* Menu Options List */}
                 <div className={styles.arraySection}>
                   <div className={styles.arrayHeader}>
-                    <label>Available Menu Types</label>
+                    <label>Menu Styles Available</label>
                     <button type="button" className={styles.addArrayBtn} onClick={() => handleAddArrayItem('menu_options')}>
-                      <ListPlus size={16} /> Add Menu Option
+                      <ListPlus size={15} /> Add Menu Style
                     </button>
                   </div>
                   {formData.menu_options.map((menu, index) => (
-                    <div key={`menu-${index}`} className={styles.arrayItem}>
+                    <div key={`m-${index}`} className={styles.arrayItem}>
                       <input 
                         type="text" 
                         value={menu} 
                         onChange={(e) => handleArrayChange('menu_options', index, e.target.value)} 
-                        placeholder="e.g. Traditional South Indian"
+                        placeholder="e.g. Traditional Sattvic Feast"
                       />
-                      <button type="button" className={styles.removeArrayBtn} onClick={() => handleRemoveArrayItem('menu_options', index)}>
+                      <button type="button" onClick={() => handleRemoveArrayItem('menu_options', index)}>
                         <X size={16} />
                       </button>
                     </div>
                   ))}
                 </div>
-
               </form>
             </div>
             
             <div className={styles.modalFooter}>
               <Button variant="outline" type="button" onClick={handleCloseModal}>Cancel</Button>
-              <Button type="submit" form="serviceForm">Create Service</Button>
+              <Button type="submit" form="serviceForm" variant="primary" loading={isSubmitting}>
+                Create Package
+              </Button>
             </div>
           </div>
         </div>

@@ -1,7 +1,12 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+}
+
+.settingsForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .header {
@@ -10,76 +15,108 @@
   align-items: center;
 
   h2 {
-    margin: 0;
-    color: var(--color-gray-900);
+    font-size: 1.65rem;
+    color: var(--color-text-primary);
+    margin-bottom: 0.25rem;
   }
+
+  p {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
 }
 
 .card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  padding: 2rem;
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.section {
-  margin-bottom: 2.5rem;
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--color-border-light);
+
+  .cardIcon {
+    color: var(--color-primary);
+  }
 
   h3 {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    color: var(--color-gray-700);
-    font-size: 1.1rem;
-    border-bottom: 1px solid var(--color-gray-300);
-    padding-bottom: 0.5rem;
-  }
-}
-
-.formGroup {
-  margin-bottom: 1rem;
-
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--color-gray-700);
-    font-size: 0.9rem;
-  }
-
-  input[type="text"],
-  input[type="email"],
-  input[type="url"],
-  textarea {
-    width: 100%;
-    padding: 0.65rem;
-    border: 1px solid var(--color-gray-400);
-    border-radius: 4px;
-    font-family: inherit;
-    transition: border-color 0.2s;
-
-    &:focus {
-      outline: none;
-      border-color: var(--color-info);
-    }
+    font-size: 1.2rem;
+    color: var(--color-text-primary);
+    margin: 0;
   }
 }
 
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 1.25rem;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 }
 
-.formRow3 {
+.formRowThree {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 }
 
-.actions {
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  input, textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-body);
+    font-size: 0.9rem;
+    outline: none;
+
+    &:focus {
+      border-color: var(--color-primary);
+      background-color: var(--color-bg-surface);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+  }
+}
+
+.footerSticky {
   display: flex;
   justify-content: flex-end;
-  border-top: 1px solid var(--color-gray-300);
-  padding-top: 1.5rem;
-  margin-top: 1rem;
+  padding: 1.5rem 0;
 }

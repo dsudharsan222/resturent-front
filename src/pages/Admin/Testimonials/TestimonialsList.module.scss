@@ -10,59 +10,104 @@
   align-items: center;
 
   h2 {
+    font-size: 1.65rem;
+    color: var(--color-text-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
     margin: 0;
-    color: var(--color-gray-900);
+  }
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
 }
 
-.tableContainer {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+.countBadge {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.tableCard {
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-xs);
   overflow-x: auto;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
+  text-align: left;
 
   th, td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--color-gray-300);
-    vertical-align: middle;
+    padding: 1.15rem 1.25rem;
+    border-bottom: 1px solid var(--color-border-light);
   }
 
   th {
-    background-color: var(--color-gray-100);
-    color: var(--color-gray-700);
-    font-weight: 600;
-    font-size: 0.9rem;
+    background-color: var(--color-bg-body);
+    color: var(--color-text-secondary);
+    font-size: 0.775rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
   }
 
   td {
-    color: var(--color-gray-900);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
   }
 }
 
-.rating {
-  color: var(--color-warning);
-  font-size: 1.1rem;
+.authorCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  strong {
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+  }
+}
+
+.stars {
+  display: flex;
+  gap: 0.2rem;
+  color: var(--color-gold);
 }
 
 .reviewText {
-  max-width: 300px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  max-width: 440px;
+}
+
+.dateText {
+  font-size: 0.825rem;
+  color: var(--color-text-muted);
 }
 
 .badge {
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
   font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 600;
 
   &.approved {
     background-color: var(--color-success-bg);
@@ -75,39 +120,59 @@
   }
 }
 
-.actions {
+.actionBtns {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 
 .approveBtn, .rejectBtn, .deleteBtn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  background: none;
-  border: 1px solid transparent;
-  cursor: pointer;
+  gap: 0.35rem;
   padding: 0.4rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.2s;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
 .approveBtn {
-  color: var(--color-success);
-  border-color: var(--color-success);
-  &:hover { background-color: var(--color-success); color: white; }
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+
+  &:hover {
+    background-color: var(--color-success);
+    color: white;
+  }
 }
 
 .rejectBtn {
-  color: var(--color-gray-600);
-  border-color: var(--color-gray-600);
-  &:hover { background-color: var(--color-gray-600); color: white; }
+  background-color: var(--color-bg-body);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+
+  &:hover {
+    background-color: var(--color-gray-200);
+    color: var(--color-text-primary);
+  }
 }
 
 .deleteBtn {
+  background-color: var(--color-bg-body);
   color: var(--color-danger);
-  border-color: var(--color-danger);
-  &:hover { background-color: var(--color-danger); color: white; }
+  border: 1px solid var(--color-border);
+
+  &:hover {
+    background-color: var(--color-danger-bg);
+    border-color: var(--color-danger);
+  }
+}
+
+.emptyTd {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-text-muted);
 }
