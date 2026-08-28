@@ -1,8 +1,15 @@
 import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Check, Sparkles } from 'lucide-react';
 import styles from './QuoteLayout.module.scss';
 import clsx from 'clsx';
+
+const steps = [
+  { number: 1, title: 'Event Type' },
+  { number: 2, title: 'Guest Count' },
+  { number: 3, title: 'Food Preference' },
+  { number: 4, title: 'Contact & Date' }
+];
 
 const QuoteLayout = () => {
   const location = useLocation();
@@ -10,7 +17,6 @@ const QuoteLayout = () => {
   
   const pathParts = location.pathname.split('/').filter(Boolean);
   // Example path: /catering/quote/wedding/500-1500/both/contact
-  // Parts: catering(0), quote(1), wedding(2), guests(3), pref(4), contact(5)
   
   let currentStep = 1;
   if (pathParts.length > 2) currentStep = 2; // eventType selected
@@ -34,29 +40,67 @@ const QuoteLayout = () => {
 
   return (
     <div className={styles.quoteWrapper}>
-      <div className={`container section-padding ${styles.container}`}>
-        
-        <div className={styles.header}>
-          {currentStep > 1 && (
-            <button className={styles.backBtn} onClick={goBack}>
-              <ChevronLeft size={20} /> Back
-            </button>
-          )}
-          <div className={styles.stepperContainer}>
-            <div className={styles.stepperLabel}>Step {currentStep} of {totalSteps}</div>
-            <div className={styles.stepperTrack}>
-              <div 
-                className={styles.stepperFill} 
-                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-              ></div>
-            </div>
+      {/* Top Banner */}
+      <div className={styles.topHeader}>
+        <div className="container">
+          <span className={styles.wizardBadge}>
+            <Sparkles size={14} /> Guided Catering Estimator
+          </span>
+          <h1>Build Your Custom Catering Package</h1>
+          <p>Complete 4 simple steps to receive a customized quote with tailored menu options.</p>
+        </div>
+      </div>
+
+      <div className={`container ${styles.container}`}>
+        {/* Stepper Bar */}
+        <div className={styles.stepperContainer}>
+          <div className={styles.stepsNav}>
+            {steps.map((step) => {
+              const isDone = currentStep > step.number;
+              const isCurrent = currentStep === step.number;
+
+              return (
+                <div 
+                  key={step.number} 
+                  className={clsx(
+                    styles.stepItem, 
+                    isDone && styles.done, 
+                    isCurrent && styles.current
+                  )}
+                >
+                  <div className={styles.stepBubble}>
+                    {isDone ? <Check size={16} /> : step.number}
+                  </div>
+                  <div className={styles.stepText}>
+                    <span className={styles.stepLabel}>Step {step.number}</span>
+                    <span className={styles.stepTitle}>{step.title}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className={styles.progressBar}>
+            <div 
+              className={styles.progressFill}
+              style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
+            ></div>
           </div>
         </div>
 
+        {/* Back Button */}
+        {currentStep > 1 && (
+          <div className={styles.backRow}>
+            <button className={styles.backBtn} onClick={goBack}>
+              <ChevronLeft size={18} /> Previous Step
+            </button>
+          </div>
+        )}
+
+        {/* Main Step Content */}
         <div className={styles.contentArea}>
           <Outlet />
         </div>
-
       </div>
     </div>
   );

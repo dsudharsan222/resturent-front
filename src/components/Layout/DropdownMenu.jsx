@@ -1,12 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Sparkles } from 'lucide-react';
 import { getCateringServices } from '../../services/api';
 import styles from './DropdownMenu.module.scss';
 import clsx from 'clsx';
 
 const DropdownMenu = ({ isMobile, closeMobileMenu }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    getCateringServices()
+      .then((data) => {
+        if (isMounted && data && Array.isArray(data)) {
+          setServices(data);
+        }
+      })
+      .catch((err) => console.error('Failed to load catering dropdown:', err));
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleMouseEnter = () => {
     if (!isMobile) setIsOpen(true);
@@ -30,26 +46,6 @@ const DropdownMenu = ({ isMobile, closeMobileMenu }) => {
     setIsOpen(false);
   };
 
-  const [services, setServices] = useState([]);
-
-  useEffect(() => {
-    getCateringServices().then(data => {
-      if (data && Array.isArray(data)) {
-        setServices(data);
-      }
-    }).catch(err => console.error("Failed to load catering services in dropdown", err));
-  }, []);
-
-  const menuItems = [
-    ...services.slice(0, 5).map(srv => ({
-      name: srv.name,
-      path: srv.path || `/catering`,
-      highlight: false
-    })),
-    { name: "View All Events →", path: "/catering", highlight: false, isViewAll: true },
-    { name: "Get a Quote", path: "/catering/quote", highlight: true },
-  ];
-
   return (
     <div 
       className={clsx(styles.dropdownContainer, isMobile && styles.mobile)}
@@ -61,20 +57,45 @@ const DropdownMenu = ({ isMobile, closeMobileMenu }) => {
         className={clsx(styles.dropdownTrigger, isOpen && styles.active)}
         onClick={handleClick}
       >
-        Catering <ChevronDown size={16} className={clsx(styles.icon, isOpen && styles.rotated)} />
+        <span>Catering</span>
+        <ChevronDown size={15} className={clsx(styles.chevron, isOpen && styles.rotated)} />
       </Link>
       
       <div className={clsx(styles.dropdownMenu, isOpen && styles.show)}>
-        {menuItems.map((item, index) => (
+        <div className={styles.menuHeader}>
+          <span>Event Catering Packages</span>
+        </div>
+        
+        <div className={styles.servicesGrid}>
+          {services.slice(0, 6).map((srv) => (
+            <Link 
+              key={srv.id} 
+              to={srv.path || `/catering/${srv.id}`} 
+              className={styles.menuItem}
+              onClick={handleItemClick}
+            >
+              <span className={styles.srvName}>{srv.name}</span>
+              {srv.capacity && <span className={styles.srvCap}>{srv.capacity}</span>}
+            </Link>
+          ))}
+        </div>
+
+        <div className={styles.menuFooter}>
           <Link 
-            key={index} 
-            to={item.path} 
-            className={clsx(styles.menuItem, item.highlight && styles.highlight)}
+            to="/catering" 
+            className={styles.viewAllLink}
             onClick={handleItemClick}
           >
-            {item.name}
+            View All Services →
           </Link>
-        ))}
+          <Link 
+            to="/catering/quote" 
+            className={styles.quoteLink}
+            onClick={handleItemClick}
+          >
+            <Sparkles size={14} /> Get Quote
+          </Link>
+        </div>
       </div>
     </div>
   );

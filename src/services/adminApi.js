@@ -53,3 +53,22 @@ export const deleteGuestCount = async (id) => apiClient(API_ENDPOINTS.DELETE_GUE
 
 export const createFoodPreference = async (data) => apiClient(API_ENDPOINTS.CREATE_FOOD_PREF, { method: 'POST', body: JSON.stringify(data) }, true);
 export const deleteFoodPreference = async (id) => apiClient(API_ENDPOINTS.DELETE_FOOD_PREF(id), { method: 'DELETE' }, true);
+
+// Config Helpers
+export const addQuoteConfigItem = async (type, data) => {
+  if (type === 'guestCounts') return createGuestCount(data);
+  if (type === 'foodPreferences') return createFoodPreference(data);
+  if (type === 'eventTypes') return createEventType(data);
+  throw new Error(`Unsupported config type: ${type}`);
+};
+
+export const updateQuoteConfigItem = async (type, id, data) => {
+  return data;
+};
+
+export const deleteQuoteConfigItem = async (type, id) => {
+  if (type === 'guestCounts') return deleteGuestCount(id);
+  if (type === 'foodPreferences') return deleteFoodPreference(id);
+  if (type === 'eventTypes') return deleteEventType(id);
+  throw new Error(`Unsupported config type: ${type}`);
+};

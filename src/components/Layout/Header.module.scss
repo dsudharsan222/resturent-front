@@ -1,85 +1,195 @@
 .header {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000;
-  transition: all 0.3s ease;
-  background-color: var(--color-bg-light);
-  border-bottom: 1px solid transparent;
+  z-index: 1500;
+  background-color: rgba(250, 248, 245, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-border-light);
+  transition: all var(--transition-fast);
 
   &.scrolled {
-    background-color: rgba(247, 245, 242, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--color-border);
+    background-color: rgba(255, 255, 255, 0.98);
     box-shadow: var(--shadow-sm);
+    border-color: var(--color-border);
   }
 }
 
 .topBar {
-  background-color: var(--color-primary);
-  color: var(--color-bg-white);
-  text-align: center;
-  font-size: 0.75rem;
-  padding: var(--spacing-xs);
-  letter-spacing: 1px;
+  background-color: var(--color-bg-dark);
+  color: var(--color-gray-300);
+  font-size: 0.775rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.topBarContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topBarLeft, .topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.topBarItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  strong {
+    color: var(--color-gold);
+  }
+}
+
+.divider {
+  color: var(--color-gray-600);
 }
 
 .headerContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: var(--spacing-md);
-  padding-bottom: var(--spacing-md);
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.logoEmblem {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-gradient);
+  color: var(--color-text-inverse);
   font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-xs);
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+}
+
+.logoMain {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
   font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.15;
+}
+
+.logoSub {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
   color: var(--color-primary);
 }
 
-.nav {
+.desktopNav {
   display: flex;
-  gap: var(--spacing-lg);
-  
-  a {
-    font-weight: 500;
-    transition: color 0.2s ease;
-    
-    &:hover {
-      color: var(--color-secondary);
-    }
+  align-items: center;
+  gap: 1.75rem;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+.navLink {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  padding: 0.35rem 0;
+  position: relative;
+  transition: color var(--transition-fast);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-primary);
+    transition: width var(--transition-fast);
   }
 
-  @media (max-width: 768px) {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 250px;
-    height: 100vh;
-    background-color: var(--color-bg-white);
-    flex-direction: column;
-    padding: 80px var(--spacing-md);
-    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-    transition: right 0.3s ease;
+  &:hover {
+    color: var(--color-primary);
+    &::after { width: 100%; }
+  }
 
-    &.navOpen {
-      right: 0;
-    }
+  &.active {
+    color: var(--color-primary);
+    font-weight: 600;
+    &::after { width: 100%; }
   }
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 1rem;
+}
+
+.cartButton {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: var(--color-bg-muted);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+  }
+}
+
+.cartBadge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(200, 75, 25, 0.4);
 }
 
 .desktopOnly {
   display: block;
-  
+
   @media (max-width: 768px) {
     display: none;
   }
@@ -87,10 +197,102 @@
 
 .mobileMenuBtn {
   display: none;
-  color: var(--color-primary);
+  color: var(--color-text-primary);
+  padding: 0.35rem;
 
-  @media (max-width: 768px) {
-    display: block;
-    z-index: 1001;
+  @media (max-width: 900px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+}
+
+/* Mobile Drawer */
+.mobileDrawerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(18, 20, 23, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.2s ease;
+}
+
+.mobileDrawer {
+  width: 85%;
+  max-width: 320px;
+  height: 100%;
+  background-color: var(--color-bg-surface);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  animation: slideIn 0.25s ease;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.mobileDrawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-border-light);
+  margin-bottom: 1.5rem;
+}
+
+.mobileLogo {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.mobileCloseBtn {
+  color: var(--color-text-secondary);
+  padding: 4px;
+}
+
+.mobileNavLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex: 1;
+
+  a {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+}
+
+.mobileDrawerFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.mobileContactBox {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
 }

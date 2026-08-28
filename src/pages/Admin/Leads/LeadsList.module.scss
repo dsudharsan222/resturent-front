@@ -1,0 +1,433 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    font-size: 1.65rem;
+    color: var(--color-text-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+.leadCountBadge {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+.controlsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background-color: var(--color-bg-surface);
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-xs);
+
+  @media (max-width: 860px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.searchBar {
+  position: relative;
+  flex: 1;
+  max-width: 420px;
+
+  .searchIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+  }
+
+  input {
+    width: 100%;
+    padding: 0.65rem 1rem 0.65rem 2.35rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background-color: var(--color-bg-body);
+    font-size: 0.9rem;
+    outline: none;
+
+    &:focus {
+      border-color: var(--color-primary);
+      background-color: var(--color-bg-surface);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+  }
+
+  @media (max-width: 860px) {
+    max-width: 100%;
+  }
+}
+
+.filterPills {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
+.filterPill {
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-gray-400);
+    color: var(--color-text-primary);
+  }
+
+  &.active {
+    background: var(--color-dark-gradient);
+    color: white;
+    border-color: transparent;
+  }
+}
+
+.tableCard {
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-xs);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+
+  th, td {
+    padding: 1.15rem 1.25rem;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  th {
+    background-color: var(--color-bg-body);
+    color: var(--color-text-secondary);
+    font-size: 0.775rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+  }
+
+  td {
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+  }
+}
+
+.customerCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  strong {
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+  }
+
+  span {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+  }
+}
+
+.eventTag {
+  background-color: var(--color-bg-body);
+  border: 1px solid var(--color-border);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.prefBadge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: var(--color-primary);
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.statusSelect {
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  outline: none;
+  cursor: pointer;
+
+  &.status_pending {
+    background-color: var(--color-warning-bg);
+    color: var(--color-warning-text);
+    border-color: rgba(234, 88, 12, 0.3);
+  }
+  &.status_contacted {
+    background-color: var(--color-info-bg);
+    color: var(--color-info-text);
+    border-color: rgba(37, 99, 235, 0.3);
+  }
+  &.status_confirmed, &.status_completed {
+    background-color: var(--color-success-bg);
+    color: var(--color-success-text);
+    border-color: rgba(22, 163, 74, 0.3);
+  }
+  &.status_cancelled {
+    background-color: var(--color-danger-bg);
+    color: var(--color-danger-text);
+  }
+}
+
+.actionBtns {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.viewBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-body);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+}
+
+.emptyTd {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-text-muted);
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(18, 20, 23, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 2300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal {
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-xl);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.modalHeader {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  h3 {
+    font-size: 1.35rem;
+    color: var(--color-text-primary);
+    margin-bottom: 0.2rem;
+  }
+
+  .createdDate {
+    font-size: 0.775rem;
+    color: var(--color-text-muted);
+  }
+}
+
+.closeBtn {
+  color: var(--color-text-secondary);
+  padding: 4px;
+}
+
+.modalBody {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modalSection {
+  h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+    color: var(--color-primary);
+    margin-bottom: 0.85rem;
+  }
+
+  label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.phoneLink {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.contactActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.whatsappBtn, .callBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: var(--radius-md);
+  font-size: 0.825rem;
+  font-weight: 600;
+}
+
+.whatsappBtn {
+  background-color: #25D366;
+  color: white;
+
+  &:hover {
+    background-color: #20BA5A;
+  }
+}
+
+.callBtn {
+  background-color: var(--color-bg-dark);
+  color: white;
+
+  &:hover {
+    background-color: #2D3139;
+  }
+}
+
+.notesBox {
+  background-color: var(--color-bg-body);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-light);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary) !important;
+}
+
+.statusButtonGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.statusBtn {
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  &.active {
+    background: var(--color-primary-gradient);
+    color: white;
+    border-color: transparent;
+  }
+}
+
+.modalFooter {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: flex-end;
+}
