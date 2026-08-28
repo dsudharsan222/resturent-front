@@ -17,6 +17,8 @@ export const getRestaurantDetails = async () => {
   };
 };
 
+export const getSettings = getRestaurantDetails;
+
 export const getCategories = async () => {
   return apiClient(API_ENDPOINTS.GET_CATEGORIES);
 };

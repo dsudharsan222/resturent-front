@@ -4,12 +4,25 @@ import { useAuth } from '../../context/AuthContext';
 
 const AdminAuthMiddleware = ({ children }) => {
   const { token, loading } = useAuth();
+  const storedToken = localStorage.getItem('adminToken');
+  const isAuthenticated = Boolean(token || storedToken);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#121417',
+        color: '#FAF8F5'
+      }}>
+        Loading admin console...
+      </div>
+    );
   }
 
-  if (!token) {
+  if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
   }
 

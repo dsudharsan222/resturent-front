@@ -1,70 +1,137 @@
-.loginContainer {
+.loginPage {
   min-height: 100vh;
+  background: var(--color-dark-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-gray-100);
-  font-family: 'Inter', sans-serif;
+  padding: 1.5rem;
 }
 
 .loginCard {
-  background: white;
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-2xl);
+  padding: 3rem 2.5rem;
+  max-width: 440px;
   width: 100%;
-  max-width: 400px;
-  padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-2xl);
+  border: 1px solid var(--color-border-light);
+
+  @media (max-width: 480px) {
+    padding: 2rem 1.5rem;
+  }
 }
 
-.header {
+.brandHeader {
   text-align: center;
   margin-bottom: 2rem;
 
-  h2 {
-    margin: 0 0 0.5rem 0;
-    color: var(--color-gray-900);
-    font-size: 1.75rem;
+  .logoBadge {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
+    background: var(--color-primary-gradient);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 16px rgba(200, 75, 25, 0.3);
   }
 
-  p {
-    margin: 0;
-    color: var(--color-gray-600);
+  h2 {
+    font-family: var(--font-heading);
+    font-size: 1.85rem;
+    color: var(--color-text-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  span {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+    font-weight: 600;
   }
 }
 
-.errorMessage {
+.errorBox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   background-color: var(--color-danger-bg);
   color: var(--color-danger-text);
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
   margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .formGroup {
-  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 
   label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--color-gray-700);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+}
+
+.inputWrapper {
+  position: relative;
+
+  .inputIcon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
   }
 
   input {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--color-gray-400);
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.2s;
+    padding: 0.85rem 1rem 0.85rem 2.65rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-body);
+    font-size: 0.95rem;
+    outline: none;
+    transition: all var(--transition-fast);
 
     &:focus {
-      outline: none;
-      border-color: var(--color-danger);
-      box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+      border-color: var(--color-primary);
+      background-color: var(--color-bg-surface);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
     }
+  }
+}
+
+.submitBtn {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.footerLinks {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.backLink {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-primary);
   }
 }

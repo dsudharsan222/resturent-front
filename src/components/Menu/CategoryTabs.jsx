@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './CategoryTabs.module.scss';
 import clsx from 'clsx';
+import { Utensils } from 'lucide-react';
 
 const CategoryTabs = ({ categories, activeCategory, onSelectCategory }) => {
   return (
@@ -9,15 +10,17 @@ const CategoryTabs = ({ categories, activeCategory, onSelectCategory }) => {
         className={clsx(styles.tab, activeCategory === 'all' && styles.active)}
         onClick={() => onSelectCategory('all')}
       >
-        All Items
+        <Utensils size={15} />
+        <span>All Dishes</span>
       </button>
-      {categories.map(cat => (
+      
+      {categories.map((cat) => (
         <button 
           key={cat.id}
-          className={clsx(styles.tab, activeCategory === cat.id && styles.active)}
+          className={clsx(styles.tab, String(activeCategory) === String(cat.id) && styles.active)}
           onClick={() => onSelectCategory(cat.id)}
         >
-          {cat.name}
+          <span>{cat.name}</span>
         </button>
       ))}
     </div>

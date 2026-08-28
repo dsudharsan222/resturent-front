@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { getQuoteData, submitQuoteRequest, getCateringServices } from '../../services/api';
 import styles from './QuoteSteps.module.scss';
 import Button from '../UI/Button';
-import { CheckCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, AlertCircle, Sparkles, Users, Calendar, ArrowRight, ShieldCheck } from 'lucide-react';
+import clsx from 'clsx';
+import toast from 'react-hot-toast';
 
 const useQuoteConfig = (configKey) => {
   const [data, setData] = useState([]);
@@ -11,24 +13,29 @@ const useQuoteConfig = (configKey) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
     const loadConfig = async () => {
       try {
         setLoading(true);
         const config = await getQuoteData();
-        setData(config[configKey] || []);
-        setError(null);
+        if (isMounted) {
+          setData(config[configKey] || []);
+          setError(null);
+        }
       } catch (err) {
-        setError(err.message || 'Failed to load options.');
+        if (isMounted) setError(err.message || 'Failed to load options.');
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
     loadConfig();
+    return () => { isMounted = false; };
   }, [configKey]);
 
   return { data, loading, error };
 };
 
+/* STEP 1: EVENT TYPE */
 export const StepEventType = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,21 +43,22 @@ export const StepEventType = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
     const fetchServices = async () => {
       try {
         setLoading(true);
         const data = await getCateringServices();
-        if (data && Array.isArray(data)) {
+        if (isMounted && data && Array.isArray(data)) {
           setEvents(data);
         }
       } catch (err) {
-        setError('Failed to load catering services.');
-        console.error(err);
+        if (isMounted) setError('Failed to load event types.');
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
     fetchServices();
+    return () => { isMounted = false; };
   }, []);
 
   const handleSelect = (id) => {
@@ -59,21 +67,38 @@ export const StepEventType = () => {
 
   return (
     <div className={styles.stepContainer}>
-      <h2>What type of event are you planning?</h2>
-      <p>Select the option that best describes your occasion.</p>
+      <div className={styles.stepHeader}>
+        <h2>What type of event are you planning?</h2>
+        <p>Select your occasion to help our chefs tailor the ideal courses and live counter arrangements.</p>
+      </div>
       
-      {loading && <p>Loading options...</p>}
-      {error && <p style={{ color: 'var(--color-danger)' }}><AlertCircle size={16} style={{ verticalAlign: 'middle' }} /> {error}</p>}
+      {loading && (
+        <div className={styles.skeletonGrid}>
+          {[1, 2, 3, 4].map((n) => (
+            <div key={n} className="skeleton" style={{ height: '90px', borderRadius: '12px' }}></div>
+          ))}
+        </div>
+      )}
+
+      {error && (
+        <div className={styles.errorBox}>
+          <AlertCircle size={18} /> {error}
+        </div>
+      )}
       
       {!loading && !error && (
         <div className={styles.optionsGrid}>
-          {events.map(event => (
+          {events.map((event) => (
             <button 
               key={event.id} 
               className={styles.optionCard}
               onClick={() => handleSelect(event.id)}
             >
-              {event.name}
+              <div className={styles.cardInfo}>
+                <span className={styles.optionName}>{event.name}</span>
+                {event.capacity && <span className={styles.optionMeta}>{event.capacity}</span>}
+              </div>
+              <ArrowRight size={18} className={styles.arrowIcon} />
             </button>
           ))}
         </div>
@@ -82,6 +107,7 @@ export const StepEventType = () => {
   );
 };
 
+/* STEP 2: GUEST COUNT */
 export const StepGuests = () => {
   const { data: guests, loading, error } = useQuoteConfig('guestCounts');
   const { eventType } = useParams();
@@ -94,60 +120,77 @@ export const StepGuests = () => {
   };
 
   const handleNextExact = () => {
-    if (exactGuests && parseInt(exactGuests) > 0) {
+    if (exactGuests && parseInt(exactGuests, 10) > 0) {
       navigate(`/catering/quote/${eventType}/${exactGuests}`);
     }
   };
 
   return (
     <div className={styles.stepContainer}>
-      <h2>How many guests are you expecting?</h2>
-      <p>This helps us recommend the best service style and menu depth.</p>
+      <div className={styles.stepHeader}>
+        <h2>How many guests are you expecting?</h2>
+        <p>Our kitchen manages events from 20 to 5,000+ attendees with customized batch preparation.</p>
+      </div>
       
-      {loading && <p>Loading options...</p>}
-      {error && <p style={{ color: 'var(--color-danger)' }}><AlertCircle size={16} style={{ verticalAlign: 'middle' }} /> {error}</p>}
+      {loading && (
+        <div className={styles.skeletonGrid}>
+          {[1, 2, 3, 4].map((n) => (
+            <div key={n} className="skeleton" style={{ height: '90px', borderRadius: '12px' }}></div>
+          ))}
+        </div>
+      )}
+
+      {error && (
+        <div className={styles.errorBox}>
+          <AlertCircle size={18} /> {error}
+        </div>
+      )}
       
       {!loading && !error && !showOther && (
         <div className={styles.optionsGrid}>
-          {guests.map(guest => (
+          {guests.map((guest) => (
             <button 
               key={guest.id} 
               className={styles.optionCard}
               onClick={() => handleSelect(guest.id)}
             >
-              {guest.name} Guests
+              <div className={styles.cardInfo}>
+                <span className={styles.optionName}>{guest.name}</span>
+                <span className={styles.optionMeta}>Estimated Group Size</span>
+              </div>
+              <ArrowRight size={18} className={styles.arrowIcon} />
             </button>
           ))}
           <button 
-            className={styles.optionCard}
+            className={clsx(styles.optionCard, styles.otherCard)}
             onClick={() => setShowOther(true)}
           >
-            Other / Custom Number
+            <div className={styles.cardInfo}>
+              <span className={styles.optionName}>Other / Exact Headcount</span>
+              <span className={styles.optionMeta}>Enter custom number</span>
+            </div>
+            <ArrowRight size={18} className={styles.arrowIcon} />
           </button>
         </div>
       )}
 
       {showOther && (
-        <div style={{ marginTop: '1.5rem' }}>
+        <div className={styles.customGuestBox}>
+          <label>Enter Exact Headcount</label>
           <input 
             type="number" 
-            placeholder="Enter exact number of guests (e.g., 250)" 
+            placeholder="e.g., 250" 
             min="1" 
             value={exactGuests}
             onChange={(e) => setExactGuests(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: '1rem', 
-              border: '2px solid var(--color-gray-200)', 
-              borderRadius: '8px', 
-              marginBottom: '1.5rem', 
-              fontSize: '1.1rem',
-              outline: 'none'
-            }}
+            className={styles.customInput}
+            autoFocus
           />
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <Button onClick={() => setShowOther(false)} style={{ flex: 1, backgroundColor: 'var(--color-gray-100)', color: 'var(--color-gray-800)' }}>Back</Button>
-            <Button onClick={handleNextExact} style={{ flex: 1 }} disabled={!exactGuests || parseInt(exactGuests) < 1}>Continue</Button>
+          <div className={styles.customActions}>
+            <Button variant="ghost" onClick={() => setShowOther(false)}>Back</Button>
+            <Button variant="primary" onClick={handleNextExact} disabled={!exactGuests || parseInt(exactGuests, 10) < 1}>
+              Continue to Step 3 <ArrowRight size={16} />
+            </Button>
           </div>
         </div>
       )}
@@ -155,6 +198,7 @@ export const StepGuests = () => {
   );
 };
 
+/* STEP 3: FOOD PREFERENCE */
 export const StepPreference = () => {
   const { data: preferences, loading, error } = useQuoteConfig('foodPreferences');
   const { eventType, guests } = useParams();
@@ -166,29 +210,54 @@ export const StepPreference = () => {
 
   return (
     <div className={styles.stepContainer}>
-      <h2>What is your food preference?</h2>
-      <p>Our kitchens maintain strict separation for pure vegetarian orders.</p>
+      <div className={styles.stepHeader}>
+        <h2>What is your food preference?</h2>
+        <p>We maintain strictly segregated kitchens and prep stations for pure vegetarian banquets.</p>
+      </div>
       
-      {loading && <p>Loading options...</p>}
-      {error && <p style={{ color: 'var(--color-danger)' }}><AlertCircle size={16} style={{ verticalAlign: 'middle' }} /> {error}</p>}
+      {loading && (
+        <div className={styles.skeletonGrid}>
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="skeleton" style={{ height: '90px', borderRadius: '12px' }}></div>
+          ))}
+        </div>
+      )}
+
+      {error && (
+        <div className={styles.errorBox}>
+          <AlertCircle size={18} /> {error}
+        </div>
+      )}
       
       {!loading && !error && (
         <div className={styles.optionsGrid}>
-          {preferences.map(pref => (
-            <button 
-              key={pref.id} 
-              className={styles.optionCard}
-              onClick={() => handleSelect(pref.id)}
-            >
-              {pref.name}
-            </button>
-          ))}
+          {preferences.map((pref) => {
+            const isVeg = pref.id.toLowerCase().includes('veg') && !pref.id.toLowerCase().includes('both') && !pref.id.toLowerCase().includes('non');
+            const isBoth = pref.id.toLowerCase().includes('both');
+
+            return (
+              <button 
+                key={pref.id} 
+                className={styles.optionCard}
+                onClick={() => handleSelect(pref.id)}
+              >
+                <div className={styles.cardInfo}>
+                  <span className={styles.optionName}>{pref.name}</span>
+                  <span className={styles.optionMeta}>
+                    {isVeg ? 'Strict Sattvic / Pure Veg Prep' : isBoth ? 'Veg & Non-Veg Multi-Cuisine' : 'Authentic Meat & Poultry Courses'}
+                  </span>
+                </div>
+                <ArrowRight size={18} className={styles.arrowIcon} />
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
   );
 };
 
+/* STEP 4: CONTACT & DATE SUBMISSION */
 export const StepContact = () => {
   const { eventType, guests, preference } = useParams();
   const navigate = useNavigate();
@@ -200,7 +269,7 @@ export const StepContact = () => {
     customer_phone: '',
     customer_email: '',
     event_date: '',
-    meal_type: '',
+    meal_type: 'lunch',
     venue: '',
     special_requirements: ''
   });
@@ -220,98 +289,177 @@ export const StepContact = () => {
       food_preference_id: preference,
       customer_name: formData.customer_name,
       customer_phone: formData.customer_phone,
-      customer_email: formData.customer_email,
+      customer_email: formData.customer_email || undefined,
       event_date: formData.event_date ? new Date(formData.event_date).toISOString() : undefined,
     };
 
     try {
       await submitQuoteRequest(payload);
+      toast.success('Your catering quote request has been sent successfully!');
       navigate('/catering/quote/success');
     } catch (err) {
-      setError(err.message);
+      console.error('Failed to submit quote request:', err);
+      setError(err.message || 'Failed to submit quote request. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className={styles.stepContainer}>
-      <h2>Final Details</h2>
-      <p>You're requesting a quote for a <strong>{preference}</strong> menu for a <strong>{eventType}</strong> with <strong>{guests}</strong> guests.</p>
-      
-      {error && (
-        <div style={{ padding: '1rem', background: 'var(--color-danger-bg)', color: 'var(--color-danger-text)', borderRadius: '4px', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <AlertCircle size={20} />
-          <p style={{ margin: 0 }}>{error}</p>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className={styles.contactForm}>
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label>Full Name</label>
-            <input name="customer_name" value={formData.customer_name} onChange={handleChange} type="text" required placeholder="John Doe" />
-          </div>
-          <div className={styles.formGroup}>
-            <label>Mobile Number</label>
-            <input name="customer_phone" value={formData.customer_phone} onChange={handleChange} type="tel" required placeholder="+91 90000 00000" />
-          </div>
+    <div className={styles.stepContactLayout}>
+      <div className={styles.stepContainer}>
+        <div className={styles.stepHeader}>
+          <h2>Final Step: Contact & Event Logistics</h2>
+          <p>Please provide your contact details so our catering specialist can send your custom menu estimate.</p>
         </div>
         
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label>WhatsApp Number</label>
-            <input type="tel" placeholder="Same as mobile" />
+        {error && (
+          <div className={styles.errorBox}>
+            <AlertCircle size={18} />
+            <span>{error}</span>
           </div>
-          <div className={styles.formGroup}>
-            <label>Email Address</label>
-            <input name="customer_email" value={formData.customer_email} onChange={handleChange} type="email" required placeholder="john@example.com" />
+        )}
+
+        <form onSubmit={handleSubmit} className={styles.contactForm}>
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label>Full Name *</label>
+              <input 
+                name="customer_name" 
+                value={formData.customer_name} 
+                onChange={handleChange} 
+                type="text" 
+                required 
+                placeholder="e.g. Vikram Reddy" 
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>WhatsApp / Phone Number *</label>
+              <input 
+                name="customer_phone" 
+                value={formData.customer_phone} 
+                onChange={handleChange} 
+                type="tel" 
+                required 
+                placeholder="+91 98765 43210" 
+              />
+            </div>
           </div>
-        </div>
-
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label>Event Date</label>
-            <input name="event_date" value={formData.event_date} onChange={handleChange} type="date" required />
+          
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label>Email Address</label>
+              <input 
+                name="customer_email" 
+                value={formData.customer_email} 
+                onChange={handleChange} 
+                type="email" 
+                placeholder="vikram@example.com" 
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Event Date *</label>
+              <input 
+                name="event_date" 
+                value={formData.event_date} 
+                onChange={handleChange} 
+                type="date" 
+                required 
+              />
+            </div>
           </div>
-          <div className={styles.formGroup}>
-            <label>Event Time / Meal</label>
-            <select name="meal_type" value={formData.meal_type} onChange={handleChange} required>
-              <option value="">Select Meal</option>
-              <option value="breakfast">Breakfast</option>
-              <option value="lunch">Lunch</option>
-              <option value="dinner">Dinner</option>
-              <option value="full_day">Full Day</option>
-            </select>
+
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label>Meal Type / Service Slot</label>
+              <select name="meal_type" value={formData.meal_type} onChange={handleChange}>
+                <option value="breakfast">Breakfast / Morning Tiffins</option>
+                <option value="lunch">Grand Lunch Banquet</option>
+                <option value="dinner">Evening Dinner / Reception</option>
+                <option value="full_day">Full Day Multiple Courses</option>
+              </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label>Event Venue / Locality</label>
+              <input 
+                name="venue" 
+                value={formData.venue} 
+                onChange={handleChange} 
+                type="text" 
+                placeholder="e.g. Hyderabad, Secunderabad, etc." 
+              />
+            </div>
           </div>
-        </div>
 
-        <div className={styles.formGroup}>
-          <label>Event Location / Venue</label>
-          <input name="venue" value={formData.venue} onChange={handleChange} type="text" required placeholder="City or Hall Name" />
-        </div>
+          <div className={styles.formGroup}>
+            <label>Special Instructions & Live Counters</label>
+            <textarea 
+              name="special_requirements" 
+              value={formData.special_requirements} 
+              onChange={handleChange} 
+              rows="3" 
+              placeholder="e.g. Live Dosa / Chaat counters, Banana leaf service, traditional sweets..."
+            ></textarea>
+          </div>
 
-        <div className={styles.formGroup}>
-          <label>Special Requirements</label>
-          <textarea name="special_requirements" value={formData.special_requirements} onChange={handleChange} rows="4" placeholder="Need live counters, premium menu, traditional serving..."></textarea>
-        </div>
+          <Button 
+            type="submit" 
+            variant="primary" 
+            size="large" 
+            loading={isSubmitting}
+            className={styles.submitBtn}
+          >
+            <Sparkles size={18} /> Submit Quote Request
+          </Button>
+        </form>
+      </div>
 
-        <Button type="submit" size="large" className={styles.submitBtn} disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting...' : 'Request Quote'}
-        </Button>
-      </form>
+      {/* Recap Summary Sidebar */}
+      <div className={styles.recapCard}>
+        <h3>Quote Summary</h3>
+        <ul className={styles.recapList}>
+          <li>
+            <span>Event Occasion:</span>
+            <strong>{eventType}</strong>
+          </li>
+          <li>
+            <span>Estimated Guests:</span>
+            <strong>{guests}</strong>
+          </li>
+          <li>
+            <span>Food Preference:</span>
+            <strong>{preference}</strong>
+          </li>
+        </ul>
+
+        <div className={styles.recapNote}>
+          <ShieldCheck size={20} className={styles.shieldIcon} />
+          <p>You will receive a transparent itemized quotation with zero hidden fees within working hours.</p>
+        </div>
+      </div>
     </div>
   );
 };
 
+/* STEP 5: SUCCESS CONFIRMATION */
 export const QuoteSuccess = () => {
   const navigate = useNavigate();
   return (
     <div className={styles.successContainer}>
-      <CheckCircle size={80} color="var(--color-success)" className={styles.successIcon} />
-      <h2>Quote Request Sent!</h2>
-      <p>Thank you for choosing SV Caterers Sri Varsha. Our event managers will review your details and contact you within 24 hours.</p>
-      <Button onClick={() => navigate('/')}>Return to Home</Button>
+      <div className={styles.successIconBubble}>
+        <CheckCircle size={64} className={styles.successIcon} />
+      </div>
+      <h2>Quote Request Received!</h2>
+      <p>Thank you for considering SV Caterers for your special milestone. Our chief event coordinator is reviewing your requirement and will connect on WhatsApp shortly.</p>
+      
+      <div className={styles.successActions}>
+        <Button variant="primary" onClick={() => navigate('/')}>
+          Return to Home
+        </Button>
+        <Button variant="outline" onClick={() => navigate('/menu')}>
+          Explore Menu Dishes
+        </Button>
+      </div>
     </div>
   );
 };

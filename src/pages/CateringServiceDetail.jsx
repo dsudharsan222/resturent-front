@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getSingleCateringService } from '../services/api';
+import { getSingleCateringService, getCateringServices } from '../services/api';
 import EnquiryForm from '../components/UI/EnquiryForm';
 import styles from './CateringServiceDetail.module.scss';
-import { CheckCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, AlertCircle, ArrowLeft, Users, Clock, Utensils, HelpCircle } from 'lucide-react';
 import Button from '../components/UI/Button';
 
 const CateringServiceDetail = () => {
@@ -12,171 +12,195 @@ const CateringServiceDetail = () => {
   const [allServices, setAllServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
-    const fetchService = async () => {
+    const fetchServiceData = async () => {
       try {
         setLoading(true);
         setError(null);
-        // Fetch both single service and all services in parallel
+        
         const [data, allData] = await Promise.all([
           getSingleCateringService(serviceId).catch(() => null),
-          import('../services/api').then(m => m.getCateringServices()).catch(() => [])
+          getCateringServices().catch(() => [])
         ]);
 
         if (data) {
           setService(data);
         } else {
-          setError('Service not found');
+          setError('Catering service package not found.');
         }
         
         if (allData && Array.isArray(allData)) {
-          setAllServices(allData.filter(s => s.id !== serviceId)); // Exclude current
+          setAllServices(allData.filter((s) => s.id !== serviceId));
         }
       } catch (err) {
+        console.error('Failed to load catering details:', err);
         setError('Failed to load catering service details.');
-        console.error(err);
       } finally {
         setLoading(false);
       }
     };
     
-    fetchService();
+    fetchServiceData();
   }, [serviceId]);
 
-  const handleEnquirySubmit = () => {
-    setShowSuccess(true);
-    window.scrollTo(0, 0);
-  };
-
-  if (loading) return <div className="container section-padding text-center">Loading...</div>;
-
-  if (error || !service) return (
-    <div className="container section-padding text-center">
-      <AlertCircle size={48} color="var(--color-danger)" style={{ margin: '0 auto', marginBottom: '1rem' }} />
-      <h2 style={{ color: 'var(--color-danger)' }}>Oops!</h2>
-      <p>{error || 'This catering service does not exist.'}</p>
-      <Link to="/catering"><Button style={{ marginTop: '1rem' }}>View All Catering Services</Button></Link>
-    </div>
-  );
-
-  if (showSuccess) {
+  if (loading) {
     return (
-      <div className={styles.successPage}>
-        <div className="container text-center section-padding">
-          <CheckCircle size={80} color="var(--color-success)" className={styles.successIcon} />
-          <h1>Enquiry Submitted Successfully!</h1>
-          <p>Thank you for choosing SV Caterers for your event. Our team will reach out to you within 24 hours.</p>
-          <Link to="/" className={styles.homeLink}>Return to Home</Link>
+      <div className="container section-padding text-center">
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <div className="skeleton" style={{ height: '300px', borderRadius: '16px', marginBottom: '1.5rem' }}></div>
+          <div className="skeleton" style={{ height: '32px', width: '60%', margin: '0 auto 1rem' }}></div>
+          <div className="skeleton" style={{ height: '18px', width: '80%', margin: '0 auto' }}></div>
         </div>
       </div>
     );
   }
 
-  // Fallback hero image if not provided
+  if (error || !service) {
+    return (
+      <div className="container section-padding text-center">
+        <AlertCircle size={54} color="var(--color-danger)" style={{ margin: '0 auto 1rem' }} />
+        <h2>Package Not Found</h2>
+        <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>
+          The requested catering service could not be found or has been updated.
+        </p>
+        <Link to="/catering">
+          <Button variant="primary">
+            <ArrowLeft size={16} /> View All Catering Services
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
   const heroImage = service.image_url || "https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&q=80&w=1600";
 
   return (
     <div className={styles.servicePage}>
+      {/* Hero Header */}
       <div className={styles.heroSection} style={{ backgroundImage: `url(${heroImage})` }}>
         <div className={styles.overlay}></div>
         <div className={`container ${styles.heroContent}`}>
-          <h1>{service.name}</h1>
-          <p>{service.capacity ? `Accommodating ${service.capacity} guests.` : 'Crafting unforgettable culinary experiences for your special day.'}</p>
+          <Link to="/catering" className={styles.backLink}>
+            <ArrowLeft size={16} /> Back to All Services
+          </Link>
+          <h1 className={styles.heroTitle}>{service.name}</h1>
+          <p className={styles.heroTagline}>
+            {service.capacity ? `Accommodating ${service.capacity} with grand hospitality.` : 'Tailored catering for your milestone celebrations.'}
+          </p>
         </div>
       </div>
 
       <div className={`container section-padding ${styles.contentGrid}`}>
+        {/* Left Column: Details, Benefits, FAQs */}
         <div className={styles.infoSection}>
+          {/* At A Glance */}
           <div className={styles.atAGlance}>
-            <h3>At a Glance</h3>
+            <h3>Event Package Overview</h3>
             <div className={styles.glanceGrid}>
               <div className={styles.glanceItem}>
-                <strong>Capacity</strong>
-                <span>{service.capacity || '50+ Guests'}</span>
+                <Users className={styles.glanceIcon} size={20} />
+                <div>
+                  <strong>Capacity</strong>
+                  <span>{service.capacity || '50+ Guests'}</span>
+                </div>
               </div>
               <div className={styles.glanceItem}>
-                <strong>Format</strong>
-                <span>Customizable / Buffet</span>
+                <Utensils className={styles.glanceIcon} size={20} />
+                <div>
+                  <strong>Serving Styles</strong>
+                  <span>Banana Leaf / Grand Buffet</span>
+                </div>
               </div>
               <div className={styles.glanceItem}>
-                <strong>Lead Time</strong>
-                <span>5 to 7 days recommended</span>
+                <Clock className={styles.glanceIcon} size={20} />
+                <div>
+                  <strong>Recommended Notice</strong>
+                  <span>3 to 7 Days Ahead</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <h2>Why Choose Us for {service.name}?</h2>
-          <p className={styles.lead}>
-            {service.description || "We bring decades of experience, traditional recipes, and modern presentation to ensure your guests leave with a memorable dining experience."}
-          </p>
-          
+          <div className={styles.descriptionBlock}>
+            <h2>Why Choose SV Caterers for {service.name}?</h2>
+            <p className={styles.leadText}>
+              {service.description || "We combine generations-old family recipes with flawless event management to guarantee an extraordinary dining experience for your guests."}
+            </p>
+          </div>
+
+          {/* Benefits & Features */}
           {service.benefits && service.benefits.length > 0 && (
-            <>
-              <h3>Features & Benefits</h3>
+            <div className={styles.featureBlock}>
+              <h3>Included Features & Highlights</h3>
               <ul className={styles.featureList}>
                 {service.benefits.map((benefitItem, index) => (
                   <li key={index}>
-                    <CheckCircle size={20} className={styles.checkIcon} />
+                    <CheckCircle size={18} className={styles.checkIcon} />
                     <span>{typeof benefitItem === 'object' ? benefitItem.benefit : benefitItem}</span>
                   </li>
                 ))}
               </ul>
-            </>
+            </div>
           )}
 
-            {service.menu_options && service.menu_options.length > 0 && (
-            <>
-              <h3 style={{ marginTop: '2rem' }}>Available Menu Options</h3>
-              <ul className={styles.featureList}>
+          {/* Available Menu Styles */}
+          {service.menu_options && service.menu_options.length > 0 && (
+            <div className={styles.menuOptionsBlock}>
+              <h3>Curated Menu Styles</h3>
+              <div className={styles.menuPills}>
                 {service.menu_options.map((menuItem, index) => (
-                  <li key={index}>
-                    <CheckCircle size={20} className={styles.checkIcon} />
-                    <span>{typeof menuItem === 'object' ? menuItem.menu_option : menuItem}</span>
-                  </li>
+                  <span key={index} className={styles.menuPill}>
+                    🍲 {typeof menuItem === 'object' ? menuItem.menu_option : menuItem}
+                  </span>
                 ))}
-              </ul>
-            </>
+              </div>
+            </div>
           )}
 
-          <div className={styles.faqSection} style={{ marginTop: '3rem' }}>
-            <h2>Frequently Asked Questions</h2>
-            <div className={styles.faqItem}>
-              <strong>What is the minimum order for {service.name}?</strong>
-              <p>Minimum orders typically start at 50 guests, but can vary based on the specific menu and service style. Please submit a quote request for details.</p>
-            </div>
-            <div className={styles.faqItem}>
-              <strong>How much notice do you need?</strong>
-              <p>We recommend booking at least 5 to 7 days in advance to ensure the highest quality of service and menu availability.</p>
-            </div>
-            <div className={styles.faqItem}>
-              <strong>Do you provide live counters?</strong>
-              <p>Yes, live counters (chaat, dosa, jalebi) are highly popular and can be added to any buffet package.</p>
+          {/* FAQs */}
+          <div className={styles.faqSection}>
+            <h3><HelpCircle size={20} /> Frequently Asked Questions</h3>
+            <div className={styles.faqList}>
+              <div className={styles.faqItem}>
+                <strong>Do you provide live counters for {service.name}?</strong>
+                <p>Yes, live counters (Dosa, Chaat, Jalebi, Tawa Fry) can be seamlessly integrated into any menu tier.</p>
+              </div>
+              <div className={styles.faqItem}>
+                <strong>Can we customize the menu courses?</strong>
+                <p>Absolutely. Every single menu is 100% customizable to honor your regional preferences, family traditions, and dietary requirements.</p>
+              </div>
+              <div className={styles.faqItem}>
+                <strong>How does the booking process work?</strong>
+                <p>Submit your quote inquiry using the form on this page. Our event coordinator will contact you with a transparent menu quotation and schedule a tasting session.</p>
+              </div>
             </div>
           </div>
         </div>
 
+        {/* Right Column: Sticky Quote Form */}
         <div className={styles.formSection}>
-          <h3>Plan Your Menu</h3>
-          <p>Fill out the details below to receive a customized quotation.</p>
-          <EnquiryForm predefinedEvent={service.id} onSubmitSuccess={handleEnquirySubmit} />
+          <div className={styles.stickyWrapper}>
+            <EnquiryForm predefinedEvent={service.id} />
+          </div>
         </div>
       </div>
 
+      {/* Other Catering Packages */}
       {allServices.length > 0 && (
-        <div className={styles.otherEventsSection}>
-          <div className="container section-padding">
-            <h2>Other events we cater</h2>
+        <section className={styles.otherEventsSection}>
+          <div className="container">
+            <h2>Explore Other Occasions We Cater</h2>
             <div className={styles.otherEventsGrid}>
-              {allServices.map(s => (
+              {allServices.slice(0, 4).map((s) => (
                 <Link key={s.id} to={s.path || `/catering/${s.id}`} className={styles.otherEventCard}>
-                  {s.name}
+                  <h4>{s.name}</h4>
+                  <span>{s.capacity || 'Explore details →'}</span>
                 </Link>
               ))}
             </div>
           </div>
-        </div>
+        </section>
       )}
     </div>
   );
